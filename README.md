@@ -1,5 +1,5 @@
-# Comp1711_me
-Code for procedural programming
-
-touch
-me first
+#include <stdio>
+int main(void)
+{
+    printf("Hello world")
+}
