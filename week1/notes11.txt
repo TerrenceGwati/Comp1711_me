@@ -1,0 +1,29 @@
+    1  mkdir example1 example2 example3
+    2  cd example2/example4
+    3  touch file1.txt
+    4  mv file1.txt example3
+    5  touch file2.txt
+    6  mv file2.txt example2
+    7  ls
+    8  unzip week1data.zip
+    9  rm week1data.zip
+   10  cat data1.txt
+   11  cat data2.txt
+   12  cat data1.txt data2.txt
+   13  ls
+   14  cat *.txt
+   15  grap "beatles" *.txt
+   16  grap "David Bowle" *.txt
+   17  grep "Beatles" *.txt
+   18  history
+   19  cat data*.txt | head -n 42 | tail -n 1 
+   20  grep "Eminem" 
+   21  grep "Eminem" *.txt
+   22  grep "1992" *.txt
+   23  grep "Pink Floyd" *.txt
+   24  | cut -d "," -f 3 | sort
+   25  cut -d "," -f 3 | sort
+   26  grep "Pink Floyd" | cut -d "," -f 4 | sort
+   27  grep "Pink Floyd" *.txt | cut -d "," -f 4 
+   28  gep "1970" *.txt | cut -d "," -f 3 | sort 
+   29  history > notes11.txt
