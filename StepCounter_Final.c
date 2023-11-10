@@ -70,8 +70,9 @@ int main()
     }
 
    FITNESS_DATA fitness[100];
-   int count = 0;
-   float sum;
+   
+   float sum = 0;
+   int count = 5000;
    int read;
    int records = 0;
    char letter;
@@ -135,6 +136,20 @@ int main()
          
 
       case 'C':
+        for (int i = 0; i < records; i++)
+        {
+            
+            int temp = fitness[i].steps;
+            if (temp < count)
+            {
+                count = temp;
+            }
+            
+        }
+        printf("%d\n", count);
+        
+        break;
+
 
 
       case 'D':
@@ -151,6 +166,7 @@ int main()
            if (read == 3)
            {
                records+= 1;
+               
            }
 
            else if (read != 3 && ferror(file) && !feof(file))
@@ -161,12 +177,20 @@ int main()
            }               
 
         } while (!feof(file));
+        for (int i = 0; i < records; i++)
+        {
+            sum += fitness[i].steps;
+        }
+        int mean = sum / records;
+        printf("Mean step count: %.d\n", mean);
+        break;
         
         
 
       case 'F':
 
       case 'Q':
+        return 0;
 
       default:
         printf("Invalid choice. Try again.\n");   
