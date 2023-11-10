@@ -70,6 +70,8 @@ int main()
     }
 
    FITNESS_DATA fitness[100];
+   int count = 0;
+   float sum;
    int read;
    int records = 0;
    char letter;
@@ -84,38 +86,92 @@ int main()
    printf("Q: Quit\n");
    
    printf("Enter choice: ");
-   scanf("%c\n", &letter);
-
-   if (letter == 'A')
+   scanf("%c", &letter);
+    
+   switch(letter)
    {
-      printf("Input filename: ");
-      scanf("%s", &input_file);
-   }
-   else if (letter == 'B')
-   {
-      do
-      {
-         read = fscanf(file,
-                       "%11[^,],%6[^,],%d\n",
-                       fitness[records].date,
-                       fitness[records].time,
-                       &fitness[records].steps);
+      case 'A':
+        printf("Input filename: ");
+        ("%c", &input_file);
 
-        if (read == 3)
+        FILE* new_file;
+        new_file = fopen("", "r");
+        if (new_file == NULL)
         {
-            records+= 1;
-        }
-
-        else if (read != 3 && ferror(file) && !feof(file))
-        {
-            printf("Error going through record\n");
+            printf("Error: could not open file.\n");
             return 1;
+        }
+        else
+        {
+            printf("File successfully loaded.\n");
+        }
+        break;
 
-        }               
-      } while (!feof(file));
-      printf("Total records: %d\n", records);
+      case 'B':
+        do
+        {
+            read = fscanf(file,
+                             "%11[^,],%6[^,],%d\n",
+                             fitness[records].date,
+                             fitness[records].time,
+                             &fitness[records].steps);
+
+           if (read == 3)
+           {
+               records+= 1;
+           }
+
+           else if (read != 3 && ferror(file) && !feof(file))
+           {
+               printf("Error going through record\n");
+               return 1;
+
+           }               
+
+        } while (!feof(file));
+        printf("Total Records: %d\n", records);
+        break;       
+        
+         
+
+      case 'C':
+
+
+      case 'D':
+
+      case 'E':
+        do
+        {
+            read = fscanf(file,
+                             "%11[^,],%6[^,],%d\n",
+                             fitness[records].date,
+                             fitness[records].time,
+                             &fitness[records].steps);
+
+           if (read == 3)
+           {
+               records+= 1;
+           }
+
+           else if (read != 3 && ferror(file) && !feof(file))
+           {
+               printf("Error going through record\n");
+               return 1;
+
+           }               
+
+        } while (!feof(file));
+        
+        
+
+      case 'F':
+
+      case 'Q':
+
+      default:
+        printf("Invalid choice. Try again.\n");   
       
-   }
+    }
 
 
    fclose(file);
