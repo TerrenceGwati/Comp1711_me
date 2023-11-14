@@ -72,11 +72,13 @@ int main()
    FITNESS_DATA fitness[100];
    
    float sum = 0;
-   int count = 5000;
+   int x;
+   int y = 0;
+   int temp;
    int read;
    int records = 0;
    char letter;
-   char input_file;
+   char input_file[90];
    printf("Menu options: \n");
    printf("A: Specify the filename to be imported\n");
    printf("B: Display the total number of records in the file\n");
@@ -93,10 +95,10 @@ int main()
    {
       case 'A':
         printf("Input filename: ");
-        ("%c", &input_file);
+        scanf("%s", input_file);
 
         FILE* new_file;
-        new_file = fopen("", "r");
+        new_file = fopen(input_file, "r");
         if (new_file == NULL)
         {
             printf("Error: could not open file.\n");
@@ -136,23 +138,61 @@ int main()
          
 
       case 'C':
-        for (int i = 0; i < records; i++)
-        {
+        //for (int i = 0; i < records; i++)
+        //{
             
-            int temp = fitness[i].steps;
-            if (temp < count)
-            {
-                count = temp;
-            }
+        //    int temp = fitness[i].steps;
+        //    if (temp < count)
+        //    {
+        //        count = temp;
+         //   }
             
-        }
-        printf("%d\n", count);
+       // }
+        //printf("%d\n", count);
         
         break;
 
 
 
       case 'D':
+        do
+        {
+            read = fscanf(file,
+                             "%11[^,],%6[^,],%d\n",
+                             fitness[records].date,
+                             fitness[records].time,
+                             &fitness[records].steps);
+
+           if (read == 3)
+           {
+               records+= 1;
+           }
+
+           else if (read != 3 && ferror(file) && !feof(file))
+           {
+               printf("Error going through record\n");
+               return 1;
+
+           }
+                          
+
+        } while (!feof(file));
+        for (int j = 0; j < records; j++)
+        {
+            int x = fitness[j].steps;
+            if (x > y)
+            {
+                y = x;
+                if (y == fitness[j].steps)
+            {
+                printf("%s,%s\n",
+                       fitness[j].date,
+                       fitness[j].time);
+            }
+               
+            }   
+        } 
+        break;
 
       case 'E':
         do
