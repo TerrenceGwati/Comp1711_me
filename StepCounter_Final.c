@@ -74,7 +74,9 @@ int main()
    float sum = 0;
    int x;
    int y = 0;
-   int temp;
+   int z = 10000;
+   int start;
+   int end;
    int read;
    int records = 0;
    char letter;
@@ -135,24 +137,47 @@ int main()
         printf("Total Records: %d\n", records);
         break;       
         
-         
-
       case 'C':
-        //for (int i = 0; i < records; i++)
-        //{
-            
-        //    int temp = fitness[i].steps;
-        //    if (temp < count)
-        //    {
-        //        count = temp;
-         //   }
-            
-       // }
-        //printf("%d\n", count);
-        
+        do
+        {
+            read = fscanf(file,
+                             "%11[^,],%6[^,],%d\n",
+                             fitness[records].date,
+                             fitness[records].time,
+                             &fitness[records].steps);
+
+           if (read == 3)
+           {
+               records+= 1;
+           }
+
+           else if (read != 3 && ferror(file) && !feof(file))
+           {
+               printf("Error going through record\n");
+               return 1;
+
+           }
+                          
+
+        } while (!feof(file));
+        for (int j = 0; j < records; j++)
+        {
+            int x = fitness[j].steps;
+            if (x < z)
+            {
+                z = x;  
+            }
+        }
+        for (int k = 0; k < records; k++)
+        { 
+            if (fitness[k].steps == z)
+            {
+                printf("%s,%s\n",
+                       fitness[k].date,
+                       fitness[k].time);
+            }
+        }
         break;
-
-
 
       case 'D':
         do
@@ -182,16 +207,20 @@ int main()
             int x = fitness[j].steps;
             if (x > y)
             {
-                y = x;
-                if (y == fitness[j].steps)
+                y = x;  
+            }
+        }
+        for (int k = 0; k < records; k++)
+        { 
+            if (fitness[k].steps == y)
             {
                 printf("%s,%s\n",
-                       fitness[j].date,
-                       fitness[j].time);
+                       fitness[k].date,
+                       fitness[k].time);
             }
-               
-            }   
-        } 
+        }
+
+        
         break;
 
       case 'E':
@@ -225,9 +254,37 @@ int main()
         printf("Mean step count: %.d\n", mean);
         break;
         
-        
-
       case 'F':
+        do
+        {
+            read = fscanf(file,
+                             "%11[^,],%6[^,],%d\n",
+                             fitness[records].date,
+                             fitness[records].time,
+                             &fitness[records].steps);
+
+           if (read == 3)
+           {
+               records+= 1;
+               
+           }
+
+           else if (read != 3 && ferror(file) && !feof(file))
+           {
+               printf("Error going through record\n");
+               return 1;
+
+           }               
+
+        } while (!feof(file));
+
+        for (int i = 0; i < records; i++)
+        {
+             if (fitness[i].steps > 500)
+             {
+                printf("Th");
+             }
+        }
 
       case 'Q':
         return 0;
@@ -236,7 +293,6 @@ int main()
         printf("Invalid choice. Try again.\n");   
       
     }
-
 
    fclose(file);
    return 0;
