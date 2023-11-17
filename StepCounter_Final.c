@@ -71,12 +71,16 @@ int main()
 
    FITNESS_DATA fitness[100];
    
+   int start_period = -1;
+   int max_period;
+   int counter;
    float sum = 0;
    int x;
    int y = 0;
    int z = 10000;
    int start;
    int end;
+   int temp;
    int read;
    int records = 0;
    char letter;
@@ -278,13 +282,29 @@ int main()
 
         } while (!feof(file));
 
-        for (int i = 0; i < records; i++)
+        for (int l = 0; l < records; l++)
         {
-             if (fitness[i].steps > 500)
+             if (fitness[l].steps > 500)
              {
-                printf("Th");
+                if (start_period == -1)
+                {
+                    start_period = l;
+                }
+                counter++;
              }
+             else
+             {
+                if (counter > max_period)
+                {
+                    max_period = counter;
+                }
+                counter = 0;
+                start_period = -1;
+             }
+            
         }
+        printf("%s,%s\n", fitness[start_period].date, fitness[start_period].time);
+        break;
 
       case 'Q':
         return 0;
