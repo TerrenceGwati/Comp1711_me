@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "FitnessDataStruct.h"
+#define buffer_size 1000
 
 // Define any additional variables here
 // Global variables for filename and FITNESS_DATA array
@@ -33,54 +34,40 @@ void tokeniseRecord(const char *input, const char *delimiter,
     // Free the duplicated string
     free(inputCopy);
 
-                    }
+}
 
 
 
+// Define any additional variables here
+// Global variables for filename and FITNESS_DATA array
 
-// Complete the main function
 
-int main() 
+// This is your helper function. Do not change it in any way.
+// Inputs: character array representing a row; the delimiter character
+// Ouputs: date character array; time character array; steps character array
+
+int main()
 {
-    char filename[1000];
-    int buffer_size;
+
+    // array of fitness data
+    FITNESS_DATA fitness[1000];
+    FILE *input = NULL;
+  
     char line[buffer_size];
-    
+    char filename[buffer_size];
+    char choice;
+    int counter = 0;
+    float mean = 0;
+    float sum;
+    int y = 0;
+    int z = 1000;
 
-    printf("Please enter the name of the data file: ");
-    scanf("%s", filename);
-
-    fgets(line, buffer_size, stdin);
-    sscanf(line, " %s ", filename);
-
-    FILE *file;
-    file = fopen(filename, "r");
-
-    if (file == NULL)
+    while (1)
     {
-        printf("Error in opening file");
-        return 1;
-    }
-
-   FITNESS_DATA fitness[100];
-   
-   int start_period = -1;
-   int max_period;
-   int counter;
-   float sum = 0;
-   int x;
-   int y = 0;
-   int z = 10000;
-   int start;
-   int end;
-   int read;
-   int records = 0;
-   char letter;
-   char input_file[1000];
-
+       
 
        printf("Menu options: \n");
-       printf("A: Specify the filename to be imported\n");
+       printf("A: Specify the filename to be imported-you need to check that the file opened correctly\n");
        printf("B: Display the total number of records in the file\n");
        printf("C: Find the date and time of the timeslot with the fewest steps\n");
        printf("D: Find the date and time for the timeslot with the largest number of steps\n");
@@ -88,79 +75,59 @@ int main()
        printf("F: Find the longest continuous period where the step count is above 500 steps\n");
        printf("Q: Quit\n");
    
-   printf("Enter choice: ");
-   scanf(" %c", &letter);
-    
-   switch(letter)
-   {
-      case 'A':
-      case 'a':
-        printf("Input filename: ");
-        scanf("%s", input_file);
+        // get the next character typed in and store in the 'choice'
+        choice = getchar();
 
-        FILE* new_file;
-        new_file = fopen(input_file, "r");
-        if (new_file == NULL)
+        // this gets rid of the newline character which the user will enter
+        // as otherwise this will stay in the stdin and be read next time
+        while (getchar() != '\n');
+
+
+        // switch statement to control the menu.
+        switch (choice)
         {
-            printf("Error: could not open file.\n");
-            return 1;
-        }
-        else
-        {
-            printf("File successfully loaded.\n");
-        }
-        break;
+        // this allows for either capital or lower case
+        case 'A':
+        case 'a':
+            
+            if (input != NULL) {
+                    fclose(input); // Close the previous file if it's open
+                }
+                printf("Input filename: ");
+                fgets(line, buffer_size, stdin);
+                sscanf(line, " %s ", filename);
 
-      case 'B':
-      case 'b':
-        do
-        {
-            read = fscanf(file,
-                             "%11[^,],%6[^,],%d\n",
-                             fitness[records].date,
-                             fitness[records].time,
-                             &fitness[records].steps);
+                input = fopen(filename, "r");
+                if (!input) {
+                    printf("Error: could not open file\n");
+                    return 1;
+                }
+            
+            counter = 0;
+            while (fgets(line, buffer_size, input) != NULL)
+            {
+                // split up the line and store it in the right place
+                char date[11];
+                char time[6];
+                char steps[10];
+                tokeniseRecord(line, ",", date, time, steps);
+                strncpy(fitness[counter].date, date, sizeof(fitness[counter].date)); //Got help from chat gpt
+                strncpy(fitness[counter].time, time, sizeof(fitness[counter].time)); //got help from chat gpt
+                fitness[counter].steps = atoi(steps);
+                counter++;
+            }
+            fclose(input);
+            break;
 
-           if (read == 3)
-           {
-               records+= 1;
-           }
+        case 'B':
+        case 'b':
+            printf("Total records: %d\n", counter);
+            
+            break;
 
-           else if (read != 3 && ferror(file) && !feof(file))
-           {
-               printf("Error going through record\n");
-               return 1;
-
-           }               
-
-        } while (!feof(file));
-        printf("Total Records: %d\n", records);
-        break;       
-        
-      case 'C':
-      case 'c':
-        do
-        {
-            read = fscanf(file,
-                             "%11[^,],%6[^,],%d\n",
-                             fitness[records].date,
-                             fitness[records].time,
-                             &fitness[records].steps);
-           if (read == 3)
-           {
-               records+= 1;
-           }
-
-           else if (read != 3 && ferror(file) && !feof(file))
-           {
-               printf("Error going through record\n");
-               return 1;
-
-           }
-                          
-
-        } while (!feof(file));
-        for (int j = 0; j < records; j++)
+        case 'C':
+        case 'c':
+            for (int j = 0; j < counter; j++)
         {
             int x = fitness[j].steps;
             if (x < z)
@@ -168,154 +135,63 @@ int main()
                 z = x;  
             }
         }
-        for (int k = 0; k < records; k++)
+        for (int k = 0; k < counter; k++)
         { 
             if (fitness[k].steps == z)
             {
-                printf("%s,%s\n",
+                printf("Fewest steps: %s %s\n",
                        fitness[k].date,
                        fitness[k].time);
             }
         }
-        break;
+            
+            break;
 
-      case 'D':
-      case 'd':
-        do
+        case 'D':
+        case 'd':
+           for (int j = 0; j < counter; j++)
         {
-            read = fscanf(file,
-                             "%11[^,],%6[^,],%d\n",
-                             fitness[records].date,
-                             fitness[records].time,
-                             &fitness[records].steps);
-
-           if (read == 3)
-           {
-               records+= 1;
-           }
-
-           else if (read != 3 && ferror(file) && !feof(file))
-           {
-               printf("Error going through record\n");
-               return 1;
-
-           }
-                          
-
-        } while (!feof(file));
-        for (int j = 0; j < records; j++)
-        {
-            int x = fitness[j].steps;
-            if (x > y)
+            int x_2 = fitness[j].steps;
+            if (x_2 > y)
             {
-                y = x;  
+                y = x_2;  
             }
         }
-        for (int k = 0; k < records; k++)
+        for (int k = 0; k < counter; k++)
         { 
             if (fitness[k].steps == y)
             {
-                printf("%s,%s\n",
+                printf("Largest steps: %s %s\n",
                        fitness[k].date,
                        fitness[k].time);
             }
         }
+            break;
+
+        case 'E':
+        case 'e':
+             for (int i = 0; i < counter; i++)
+             {
+                sum += fitness[i].steps;
+             }
+            float mean = sum / counter;
+            printf("Mean step count: %.0f\n", mean);
+            break;
+
+        case 'F':
+        case 'f':
+            break;
 
         
-        break;
+        case 'Q':
+        case 'q':
+            return 0;
+            break;
 
-      case 'E':
-      case 'e':
-        do
-        {
-            read = fscanf(file,
-                             "%11[^,],%6[^,],%d\n",
-                             fitness[records].date,
-                             fitness[records].time,
-                             &fitness[records].steps);
-
-           if (read == 3)
-           {
-               records+= 1;
-               
-           }
-
-           else if (read != 3 && ferror(file) && !feof(file))
-           {
-               printf("Error going through record\n");
-               return 1;
-
-           }               
-
-        } while (!feof(file));
-        for (int i = 0; i < records; i++)
-        {
-            sum += fitness[i].steps;
+        // if they type anything else:
+        default:
+            printf("Invalid choice\n");
+            break;
         }
-        float mean = sum / records;
-        printf("Mean step count: %.0f\n", mean);
-        break;
-        
-      case 'F':
-      case 'f':
-        do
-        {
-            read = fscanf(file,
-                             "%11[^,],%6[^,],%d\n",
-                             fitness[records].date,
-                             fitness[records].time,
-                             &fitness[records].steps);
-
-           if (read == 3)
-           {
-               records+= 1;
-               
-           }
-
-           else if (read != 3 && ferror(file) && !feof(file))
-           {
-               printf("Error going through record\n");
-               return 1;
-
-           }               
-
-        } while (!feof(file));
-
-        for (int l = 0; l < records; l++)
-        {
-             if (fitness[l].steps > 500)
-             {
-                if (start_period == -1)
-                {
-                    start_period = l;
-                }
-                counter++;
-             }
-             else
-             {
-                if (counter > max_period)
-                {
-                    max_period = counter;
-                }
-                counter = 0;
-                start_period = -1;
-             }
-            
-        }
-        printf("%s,%s\n", fitness[start_period].date, fitness[start_period].time);
-        break;
-
-      case 'Q':
-      case 'q':
-        return 0;
-
-      default:
-        printf("Invalid choice. Try again.\n");   
-      
     }
-
-   fclose(file);
-   return 0;
-   
 }
-
